@@ -24,26 +24,39 @@ const MainPage = () => {
       <div id="header">
         <img src="images/icons/logo.png" alt="logo" />
       </div>
+      <div id="banner">
+        <img src="images/banners/banner1.png" alt="banner" />
+      </div>
       <div id="body">
-        <div id="banner">
-          <img src="images/banners/banner1.png" alt="banner" />
-        </div>
-        <h2>Products</h2>
+        <h2>Items</h2>
         <div id="product-list">
           {products.map((product, idx) => {
-            {/* 원소들을 배열하는 함수: map 각각 배열요소들의 키가 필요하다. 
-            고유의 요소에 키를 붙여라 최상의요소에 붙여줌*/}
+            {
+              /* 원소들을 배열하는 함수: map 각각 배열요소들의 키가 필요하다. 
+            고유의 요소에 키를 붙여라 최상의요소에 붙여줌*/
+            }
             // console.log(products, product, idx);
             return (
               <div className="product-card" key={idx}>
                 {/* 중복되지않는 값을 키로 사용해야한다 */}
                 <div>
-                  <img className="product-img" src={product.imageUrl} alt="{product.name}" />
+                  <img
+                    className="product-img"
+                    src={product.imageUrl}
+                    alt="{product.name}"
+                  />
                 </div>
                 <div className="product-content">
                   <span className="product-name">{product.name}</span>
-                  
-                  <span className="product-price"><img className="product-avatar" src="images/icons/avatar.png" alt="{product.name}" />{product.price}</span>
+                  <span className="product-p">price</span>
+                  <span className="product-price">
+                    <img
+                      className="product-avatar"
+                      src="images/icons/avatar.png"
+                      alt="{product.name}"
+                    />
+                    {product.price}
+                  </span>
                   <div className="product-seller">
                     <span>wanna</span>
                   </div>
