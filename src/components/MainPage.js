@@ -1,78 +1,99 @@
-import React from "react";
+import { API_URL } from "../config/constants";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./MainPage.css";
 import axios from "axios";
-import { useEffect } from "react";
+import { Carousel } from "antd";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 const MainPage = () => {
-  let [products, setProducts] = React.useState([]); //컴포넌트의 상태를 바꿀 수 있는 함수:useState
-  //products를 setProducts 바꿔주는 역활.
-
+  let [products, setProducts] = React.useState([]);
+  let [banners, setBanners] = React.useState([]);
   useEffect(() => {
-    //콜백함수:useEffect 한번만 실행되도록 되어있다.[]넣어주면 렌더되자마자 더이상 실행하지 않음
+    /*products 통신*/
     axios
-      .get("https://8e56dfb9-e6a0-47bb-ac79-7facafb276ea.mock.pstmn.io/produts")
+      // 상품db정보
+      .get(`${API_URL}/products/`)
       .then((res) => {
-        products = res.data.products; //products에 내용저장 //기존의 값을 버리고 상태값이 바뀜
-        setProducts(products); //통신완료를 하면 값을 바꿔
+        products = res.data.product;
+        setProducts(products);
+      })
+      .catch((err) => {
+        return console.log(err);
+      });
+
+    /*banners 통신*/
+    axios
+      .get(`${API_URL}/banners`)
+      .then((res) => {
+        banners = res.data.banners;
+        setBanners(banners);
       })
       .catch((err) => {
         return console.log(err);
       });
   }, []);
+  if (products === undefined) {
+    return <h1>작품정보를 받고있습니다.</h1>;
+  }
   return (
     <>
-      <div id="header">
-        <img src="images/icons/logo.png" alt="logo" />
-      </div>
-      <div id="banner">
-        <img src="images/banners/banner1.png" alt="banner" />
-      </div>
       <div id="body">
-        <h2>Items</h2>
+        <Carousel autoplay autoplaySpeed={1200}>
+          {banners.map((banner, index) => {
+            return (
+              <Link to={banner.href} key={index}>
+                <div id="banner">
+                  <img src={`${API_URL}/${banner.imageUrl}`} />
+                </div>
+              </Link>
+            );
+          })}
+        </Carousel>
+        <h2>Explore, collect, and sell NFTs</h2>
         <div id="product-list">
           {products.map((product, idx) => {
-            {
-              /* 원소들을 배열하는 함수: map 각각 배열요소들의 키가 필요하다. 
-            고유의 요소에 키를 붙여라 최상의요소에 붙여줌*/
-            }
-            // console.log(products, product, idx);
             return (
               <div className="product-card" key={idx}>
-                {/* 중복되지않는 값을 키로 사용해야한다 */}
-                <div>
-                  <img
-                    className="product-img"
-                    src={product.imageUrl}
-                    alt="{product.name}"
-                  />
-                </div>
-                <div className="product-content">
-                  <span className="product-name">{product.name}</span>
-                  <span className="product-p">price</span>
-                  <span className="product-price">
+                <Link className="product-link" to={`/product/${product.id}`}>
+                  {/* 썸네일 이미지 */}
+                  <div>
                     <img
-                      className="product-avatar"
-                      src="images/icons/avatar.png"
-                      alt="{product.name}"
+                      className="product-img"
+                      src={`${API_URL}/${product.imageUrl}`}
+                      alt={`${API_URL}/${product.name}`}
                     />
-                    {product.price}
-                  </span>
-                  <div className="product-seller">
-                    <span>wanna</span>
                   </div>
-                </div>
+                  {/* 상품정보내역 */}
+                  <div className="product-content">
+                    <span className="product-name">{product.name}</span>
+                    <span className="product-price">
+                      <img
+                        className="product-avatar"
+                        src="images/icons/avatar.png"
+                        alt={`${API_URL}/${product.name}`}
+                      />
+                      {product.price}
+                    </span>
+                    <div className="product-footer">
+                      <div className="product-seller">
+                        <span>Wanna</span>
+                      </div>
+                      <span className="product-date">
+                        {`${dayjs(product.createdAt).fromNow()}`}
+                        {/* {dayjs(product.createdAt).fromNow()} */}
+                      </span>
+                      {/* dayjs(대상).fromNow */}
+                    </div>
+                  </div>
+                </Link>
               </div>
             );
           })}
         </div>
       </div>
-      <div id="footer">
-        <a href="#">회사소개</a>
-        <a href="#">이용약관</a>
-        <a href="#">통신판매업:123-1234</a>
-        <a href="#">사업자등록번호:456-56-78951</a>
-        <a href="#">개인정보...</a>
-      </div>{" "}
     </>
   );
 };
