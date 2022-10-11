@@ -49,7 +49,7 @@ const UploadPage = () => {
         <Form name="uploadForm" onFinish={onSubmit}>
           <Form.Item
             name="upload"
-            label={<div className="upload-label">작품 사진</div>}
+            label={<div className="upload-label">작품 사진</div>}valuePropName="fileList"
           >
             <Upload
               name="image"
@@ -97,12 +97,13 @@ const UploadPage = () => {
             label={<div className="upload-label">판매가</div>}
             rules={[{ required: true, message: "판매가를 입력해주세요" }]}
             name="price"
+            initialValue={0}
           >
             <InputNumber
               className="upload-price"
               size="large"
               min={0}
-              defaultValue={0}
+             
             />
           </Form.Item>
           <Divider />
